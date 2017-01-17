@@ -8,9 +8,9 @@ vim: ts=4 ai fdm=marker
 	mod by C. Schiller, schreibcarl@gmail.com
 
 	This code is based on a few other people's work and in parts shamelessly copied.
-	The ThermalTable was provided by Lorenzo Martignoni and the fan control 
+	The ThermalTable was provided by Lorenzo Martignoni and the fan control
 	algorithm is based on his fan-daemon.py implementation.
-	
+
 	The MCU protocol was reverse engineered by strace() calls to up_send_daemon and
 	up_read_daemon of the original firmware.
 
@@ -108,7 +108,7 @@ void cleanup(int shut,int s,int howmany)
 	retval = close (s);
 	if (retval)
 		syslog(LOG_ERR, "close");
-} 
+}
 
 static void sighandler(int sig)
 {
@@ -359,11 +359,11 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 	struct tm *strSetTime;
 	char buf[15];
 	char cmdBuf[15];
-	
+
 	syslog(LOG_DEBUG, "Handling Command: %s\n", message);
 
 	// This is a very ugly list of if-else and strncmp calls...
-	
+
 	if(strncmp(message, "DeviceReady", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "DeviceReady\n");
@@ -381,7 +381,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 		syslog(LOG_DEBUG, "GetFanRpm\n");
 		if(SendCommand(fd, FanSpeedGetCmd, buf) > ERR_WRONG_ANSWER)
 		{
-			if ( buf[5] > 0 ) 
+			if ( buf[5] > 0 )
 				tmp = (int) (300000 / buf[5]);
 			else
 				tmp = 0;
@@ -400,7 +400,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "GetTemperature", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "GetTemperature\n");
@@ -421,15 +421,15 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
- 
- 
+
+
 	else if(strncmp(message, "quit", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "Quit\n");
 		strncpy(retMessage, "Bye\n", bufSize);
 		return 2;
 	}
-	
+
 	else if(strncmp(message, "EnablePowerRecovery", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "EnablePowerRecovery");
@@ -441,7 +441,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "DisablePowerRecovery", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "DisablePowerRecovery");
@@ -453,7 +453,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "GetPowerRecoveryState", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "GetPowerRecoveryState");
@@ -473,7 +473,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "EnableWOL", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "EnableWOL");
@@ -485,7 +485,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "DisableWOL", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "DisableWOL");
@@ -497,7 +497,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "GetWOLState", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "GetWOLState");
@@ -517,7 +517,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "PowerLedOn", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "PowerLedOn");
@@ -529,7 +529,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "PowerLedOff", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "PowerLedOff");
@@ -541,7 +541,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "PowerLedBlink", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "PowerLedBlink");
@@ -553,7 +553,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "systohc", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "systohc");
@@ -585,7 +585,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "hctosys", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "hctosys");
@@ -622,7 +622,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "ReadRtc", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "ReadRtc");
@@ -638,9 +638,9 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			strTime.tm_hour = buf[7];
 			strTime.tm_min = buf[6];
 			strTime.tm_sec = buf[5];
-			strTime.tm_isdst = -1;	 
+			strTime.tm_isdst = -1;
 			rtcTime = mktime(&strTime);
-			strcpy(timeStr, ctime(&rtcTime));				 
+			strcpy(timeStr, ctime(&rtcTime));
 			snprintf(retMessage, bufSize, "RTC: %s", timeStr);
 		}
 		else
@@ -649,14 +649,14 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 			return 1;
 		}
 	}
-	
+
 	else if(strncmp(message, "ShutdownDaemon", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "ShutdownDaemon");
 		strncpy(retMessage, "OK\n", bufSize);
 		return 3;
 	}
-	
+
 	else if(strncmp(message, "help", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "help");
@@ -688,7 +688,9 @@ int main(int argc, char *argv[])
 	char buf[100];
 	char *configPath = "/etc/mcm-daemon.ini";
 	char msgBuf[15];
+	int hyst;
 	int temperature;
+	int temperature_old;
 	int fanSpeed;
 	int fanRpm;
 	struct sockaddr_in s_name;
@@ -707,7 +709,9 @@ int main(int argc, char *argv[])
 	pollTimeMs = 10; // Sleep 10ms for every loop
 	fanSpeed = -1;
 	fanRpm = -1;
-	
+	temperature_old = 0;
+	hyst = stDaemonConfig.hysteresis;
+
 	stDaemonConfig.goDaemon = 1;
 	stDaemonConfig.debug = 0;
 
@@ -742,14 +746,14 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "				 -d							debug (implies -f)\n");
 				return EXIT_FAILURE;
 		}
-	
+
 	}
-	
+
 	// Register some signal handlers
 	signal(SIGTERM, sighandler);
 	signal(SIGINT, sighandler);
-	
-	// Load our configuration file or use default values 
+
+	// Load our configuration file or use default values
 	// if it doesn't exist!
 	iniFile = iniparser_load(configPath);
 	stDaemonConfig.portName = iniparser_getstring(iniFile, "Serial:Port", "/dev/ttyS1");
@@ -772,12 +776,12 @@ int main(int argc, char *argv[])
 		setlogmask(LOG_UPTO(LOG_DEBUG));
 	else
 		setlogmask(LOG_UPTO(LOG_INFO));
-	
+
 	if(stDaemonConfig.goDaemon)
 		openlog("mcm-daemon", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
 	else
 		openlog("mcm-daemon", LOG_CONS | LOG_PID | LOG_NDELAY | LOG_PERROR, LOG_LOCAL1);
-		
+
 	if(stDaemonConfig.goDaemon)
 	{
 		pid = fork();
@@ -786,7 +790,7 @@ int main(int argc, char *argv[])
 			syslog(LOG_ERR, "Forking failed.\n");
 			return EXIT_FAILURE;
 		}
-		
+
 		if(pid > 0)
 		{
 			return EXIT_SUCCESS;
@@ -799,7 +803,7 @@ int main(int argc, char *argv[])
 			syslog(LOG_ERR, "Could not create process group\n");
 			return EXIT_FAILURE;
 		}
-		
+
 		if((chdir("/")) < 0)
 		{
 			 syslog(LOG_ERR, "Could not chdir(\"/\")\n");
@@ -808,7 +812,7 @@ int main(int argc, char *argv[])
 		close(STDIN_FILENO);
 		close(STDOUT_FILENO);
 		close(STDERR_FILENO);
-	
+
 	}
 
 	// Open our socket server
@@ -869,7 +873,7 @@ int main(int argc, char *argv[])
 		syslog(LOG_ERR, "Error sending DeviceReady command, exit!\n");
 		return EXIT_FAILURE;
 	}
-	
+
 	if(stDaemonConfig.syncOnStartup)
 	{
 		syslog(LOG_INFO, "Setting system clock from RTC...\n");
@@ -883,7 +887,7 @@ int main(int argc, char *argv[])
 	// Wake every 1s to poll the power button GPIO
 	// Wake every few ms to poll the sockets for connections
 	// Sleep
-	
+
 	while(1)
 	{
 		sleepCount = 0;
@@ -909,52 +913,51 @@ int main(int argc, char *argv[])
 		{
 			temperature = ThermalTable[temperature];
 			syslog(LOG_DEBUG, "Read Temperature: %i\n", temperature);
-			if(temperature < (stDaemonConfig.tempLow - stDaemonConfig.hysteresis))
+			if(temperature < (stDaemonConfig.tempLow))
 			{
 				if(fanSpeed != 0)
 				{
 					syslog(LOG_DEBUG, "Set Fan Stop\n");
-					SendCommand(fd, FanStopCmd, NULL);
 					fanSpeed = 0;
 				}
 			}
-			else if(temperature < stDaemonConfig.tempLow)
+			else if(temperature < temperature_old)
 			{
-				if(fanSpeed > 1)
+				hyst -= 1;
+				if(temperature < temperature_old - hyst)
 				{
-					syslog(LOG_DEBUG, "Set Fan Half\n");
-					SendCommand(fd, FanHalfCmd, NULL);
-					fanSpeed = 1;
+					fanSpeed -= 5;
+					syslog(LOG_DEBUG, "Slow down fan\n");
+					hyst = stDaemonConfig.hysteresis;
 				}
 			}
-			else if(temperature < (stDaemonConfig.tempHigh - stDaemonConfig.hysteresis))
+			else if(temperature > temperature_old)
 			{
-				if(fanSpeed != 1)
+				if(temperature_old < stDaemonConfig.tempLow)
 				{
-					syslog(LOG_DEBUG, "Set Fan Half\n");
-					SendCommand(fd, FanHalfCmd, NULL);
-					fanSpeed = 1;
+					fanSpeed += 25;
+					syslog(LOG_DEBUG, "Speed fan low\n");
+				}
+				else
+				{
+					hyst = stDaemonConfig.hysteresis;
+					fanSpeed += 5;
+					syslog(LOG_DEBUG, "Speed fan up\n");
 				}
 			}
-			else if(temperature < stDaemonConfig.tempHigh)
+			else if(temperature > stDaemonConfig.tempHigh)
 			{
-				if(fanSpeed < 1)
+				if(fanSpeed < 240 )
 				{
-					syslog(LOG_DEBUG, "Set Fan Half\n");
-					SendCommand(fd, FanHalfCmd, NULL);
-					fanSpeed = 1;
+					fanSpeed = 250;
+					syslog(LOG_DEBUG, "Set fan full\n");
 				}
 			}
-			else
-			{
-				if(fanSpeed != 2)
-				{
-					syslog(LOG_DEBUG, "Set Fan Full\n");
-					SendCommand(fd, FanFullCmd, NULL);
-					fanSpeed = 2;
-				}
-			}
+	 	temperature_old = temperature;
+		FanCmd[3] = fanSpeed;
+		SendCommand(fd, FanCmd, NULL);
 		}
+
 		else
 		{
 			syslog(LOG_ERR, "Error reading Temperature!\n");
