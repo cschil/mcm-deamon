@@ -1,0 +1,36 @@
+# Object files
+*.o
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Output files
+mcm-daemon
+*.hex
+*.lss
+*.lst
+*.map
+*.elf
+*.bin
+*.eep
+.dep
+*.dep
+*.sym
+debian/mcm-daemon
+debian/mcm-daemon.debhelper.log
+debian/*.debhelper
+
+# iniparser repo
+iniparser
