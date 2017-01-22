@@ -660,7 +660,7 @@ int HandleCommand(char *message, int messageLen, char *retMessage, int bufSize)
 	else if(strncmp(message, "help", messageLen) == 0)
 	{
 		syslog(LOG_DEBUG, "help");
-		strncpy(retMessage, "Available Commands: DeviceReady, GetTemperature, DeviceShutdown, "
+		strncpy(retMessage, "Available Commands: DeviceReady, GetTemperature, GetFanRpm, DeviceShutdown, "
 				"EnablePowerRecovery, DisablePowerRecovery, GetPowerRecoveryState, "
 				"EnableWOL, DisableWOL, GetWOLState, PowerLedOn, "
 				"PowerLedOff, PowerLedBlink, systohc, hctosys, ReadRtc, ShutdownDaemon, quit\n", bufSize);
@@ -693,6 +693,7 @@ int main(int argc, char *argv[])
 	int temperature_old;
 	int fanSpeed;
 	int fanRpm;
+	int fanStart;
 	struct sockaddr_in s_name;
 	struct pollfd *fds = NULL;
 	nfds_t nfds;
@@ -709,6 +710,7 @@ int main(int argc, char *argv[])
 	pollTimeMs = 10; // Sleep 10ms for every loop
 	fanSpeed = -1;
 	fanRpm = -1;
+	fanStart= 0;
 	temperature_old = 0;
 	hyst = stDaemonConfig.hysteresis;
 
@@ -917,7 +919,7 @@ int main(int argc, char *argv[])
 			{
 				if(fanSpeed != 0)
 				{
-					syslog(LOG_DEBUG, "Set Fan Stop\n");
+					syslog(LOG_DEBUG, "Stop fan\n");
 					fanSpeed = 0;
 				}
 			}
@@ -927,34 +929,50 @@ int main(int argc, char *argv[])
 				if(temperature < temperature_old - hyst)
 				{
 					fanSpeed -= 5;
-					syslog(LOG_DEBUG, "Slow down fan\n");
+					syslog(LOG_DEBUG, "Fanspeed down\n");
 					hyst = stDaemonConfig.hysteresis;
 				}
 			}
+			else if (temperature_old < (stDaemonConfig.tempLow)) 
+			{
+				while(fanRpm < 1)
+					{
+						if(SendCommand(fd, FanSpeedGetCmd, msgBuf) > ERR_WRONG_ANSWER)
+						{
+							if ( msgBuf[5] == 0 ) 
+								fanRpm = 0;
+ 							else
+								fanRpm = (int) (300000 / (uint8_t) msgBuf[5]); 
+						}
+						else
+						{
+							fanRpm = -1;
+						}	
+						fanSpeed +=2;
+						sleep(0.5);
+						FanCmd[3] = fanSpeed;
+						SendCommand(fd, FanCmd, NULL);
+			 		}
+				fanStart = fanSpeed;
+				syslog(LOG_DEBUG, "Start Fan with speed %i\n", fanStart);		
+			}
 			else if(temperature > temperature_old)
 			{
-				if(temperature_old < stDaemonConfig.tempLow)
-				{
-					fanSpeed += 25;
-					syslog(LOG_DEBUG, "Speed fan low\n");
-				}
-				else
-				{
-					hyst = stDaemonConfig.hysteresis;
-					fanSpeed += 5;
-					syslog(LOG_DEBUG, "Speed fan up\n");
-				}
+				hyst = stDaemonConfig.hysteresis;
+				fanSpeed += 5;
+				syslog(LOG_DEBUG, "Fanspeed up %i\n", fanSpeed);
 			}
 			else if(temperature > stDaemonConfig.tempHigh)
 			{
 				if(fanSpeed < 240 )
 				{
-					fanSpeed = 250;
+					fanSpeed = 255;
 					syslog(LOG_DEBUG, "Set fan full\n");
 				}
 			}
 	 	temperature_old = temperature;
 		FanCmd[3] = fanSpeed;
+		syslog(LOG_DEBUG, "Fanspeed is set to: %i\n", fanSpeed);
 		SendCommand(fd, FanCmd, NULL);
 		}
 

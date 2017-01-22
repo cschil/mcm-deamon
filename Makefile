@@ -18,7 +18,7 @@ INSTALL = install
 
 ETC_DIR=$(DESTDIR)/etc
 SYS_DIR=$(DESTDIR)/etc/systemd/system/
-BIN_DIR=$(DESTDIR)/sbin
+BIN_DIR=$(DESTDIR)/usr/sbin
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)

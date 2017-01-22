@@ -20,4 +20,4 @@ fi
 # Author: Martin Mueller <mm@c-base.org>
 
 DESC="MCU control daemon for fan and LEDs"
-DAEMON=/sbin/mcm-daemon
+DAEMON=/usr/sbin/mcm-daemon
